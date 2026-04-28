@@ -1,1 +1,999 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CrossFit Pro Manager v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07090f;
+  --s1:#0c1018;
+  --s2:#111827;
+  --s3:#1a2235;
+  --s4:#1f2b40;
+  --border:#1e3050;
+  --border2:#243860;
+  --gold:#f5a623;
+  --gold2:#ffd166;
+  --gold3:#3d2800;
+  --red:#ef4444;
+  --red2:#7f1d1d;
+  --blue:#3b82f6;
+  --blue2:#1e3a5f;
+  --green:#10b981;
+  --green2:#064e3b;
+  --purple:#8b5cf6;
+  --orange:#f97316;
+  --text:#e2e8f0;
+  --text2:#94a3b8;
+  --text3:#475569;
+  --r:12px;
+  --r2:8px;
+  --shadow:0 4px 24px rgba(0,0,0,.5);
+  --shadow2:0 8px 48px rgba(0,0,0,.7);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--s1)}
+::-webkit-scrollbar-thumb{background:var(--gold);border-radius:3px}
 
+/* ─── SIDEBAR ─── */
+#sb{
+  position:fixed;top:0;right:0;width:220px;height:100vh;
+  background:var(--s1);border-left:1px solid var(--border);
+  display:flex;flex-direction:column;z-index:50;overflow-y:auto;
+}
+.sb-logo{padding:20px 16px 16px;border-bottom:1px solid var(--border)}
+.sb-logo .brand{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900;color:var(--gold);letter-spacing:3px}
+.sb-logo .sub{font-size:10px;color:var(--text2);margin-top:2px;font-family:'Barlow Condensed';letter-spacing:2px}
+.sb-version{display:inline-block;background:var(--gold3);color:var(--gold);font-size:9px;padding:2px 7px;border-radius:20px;margin-top:6px;font-family:'Barlow Condensed';font-weight:700;letter-spacing:1px}
+.nav-group{padding:14px 10px 4px;font-size:9px;color:var(--text3);letter-spacing:3px;font-family:'Barlow Condensed';font-weight:700}
+.ni{
+  display:flex;align-items:center;gap:9px;padding:9px 12px;cursor:pointer;
+  border-radius:var(--r2);margin:1px 6px;font-size:13px;color:var(--text2);
+  transition:.15s;border:1px solid transparent;font-family:'Tajawal';font-weight:500;
+}
+.ni:hover{background:var(--s2);color:var(--text)}
+.ni.on{background:linear-gradient(135deg,rgba(245,166,35,.12),rgba(245,166,35,.04));color:var(--gold);border-color:rgba(245,166,35,.18)}
+.ni .ico{font-size:16px;width:20px;text-align:center}
+.ni .badge{margin-right:auto;background:var(--red);color:#fff;font-size:9px;padding:2px 6px;border-radius:10px;font-family:'Barlow Condensed';font-weight:700}
+
+/* ─── MAIN ─── */
+#main{margin-right:220px;min-height:100vh}
+
+/* ─── TOPBAR ─── */
+.topbar{
+  position:sticky;top:0;z-index:40;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 24px;background:rgba(7,9,15,.94);
+  backdrop-filter:blur(16px);border-bottom:1px solid var(--border);
+}
+.tb-title{font-family:'Barlow Condensed';font-size:22px;font-weight:800;color:var(--gold);letter-spacing:2px}
+.tb-right{display:flex;align-items:center;gap:10px}
+
+/* ─── BUTTONS ─── */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 15px;border-radius:var(--r2);border:none;cursor:pointer;font-family:'Tajawal';font-size:13px;font-weight:700;transition:.15s}
+.btn-gold{background:var(--gold);color:#000}.btn-gold:hover{background:var(--gold2);box-shadow:0 0 20px rgba(245,166,35,.4)}
+.btn-outline{background:transparent;color:var(--text2);border:1px solid var(--border)}.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
+.btn-red{background:var(--red);color:#fff}.btn-red:hover{background:#dc2626}
+.btn-green{background:var(--green);color:#fff}.btn-green:hover{background:#059669}
+.btn-blue{background:var(--blue);color:#fff}.btn-blue:hover{background:#2563eb}
+.btn-purple{background:var(--purple);color:#fff}.btn-purple:hover{background:#7c3aed}
+.btn-sm{padding:5px 11px;font-size:12px}
+.btn-xs{padding:3px 8px;font-size:11px}
+.btn-icon{padding:7px;aspect-ratio:1}
+
+/* ─── PAGES ─── */
+.page{display:none;padding:20px 24px;animation:fadeup .25s ease}
+.page.on{display:block}
+@keyframes fadeup{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.inner{max-width:1400px}
+
+/* ─── CARDS ─── */
+.card{background:var(--s2);border:1px solid var(--border);border-radius:var(--r)}
+.card-p{padding:18px}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border)}
+.card-title{font-family:'Barlow Condensed';font-size:14px;font-weight:700;color:var(--gold);letter-spacing:1px}
+.card-body{padding:18px}
+
+/* ─── STAT TILES ─── */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:20px}
+.st{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:16px;position:relative;overflow:hidden;transition:.2s}
+.st:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.st-accent{position:absolute;top:0;right:0;width:3px;height:100%;border-radius:0 var(--r) var(--r) 0}
+.st-icon{font-size:24px;margin-bottom:8px}
+.st-val{font-family:'Barlow Condensed';font-size:34px;font-weight:800;line-height:1}
+.st-lbl{font-size:12px;color:var(--text2);margin-top:3px;font-family:'Tajawal'}
+.st-sub{font-size:10px;margin-top:5px;color:var(--green)}
+
+/* ─── SECTION HEADER ─── */
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.sh-t{font-family:'Barlow Condensed';font-size:15px;font-weight:700;color:var(--gold);letter-spacing:1px;display:flex;align-items:center;gap:8px}
+.sh-t::before{content:'';width:3px;height:16px;background:var(--gold);border-radius:2px}
+
+/* ─── TABLE ─── */
+.tw{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+table{width:100%;border-collapse:collapse}
+thead th{background:var(--s3);padding:10px 14px;font-size:11px;color:var(--text2);text-align:right;border-bottom:1px solid var(--border);font-family:'Barlow Condensed';letter-spacing:1px;font-weight:700}
+tbody td{padding:10px 14px;font-size:13px;border-bottom:1px solid rgba(30,48,80,.4);vertical-align:middle;font-family:'Tajawal'}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:rgba(245,166,35,.025)}
+
+/* ─── BADGES ─── */
+.badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;font-family:'Barlow Condensed';letter-spacing:.5px}
+.b-gold{background:rgba(245,166,35,.15);color:var(--gold);border:1px solid rgba(245,166,35,.3)}
+.b-red{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3)}
+.b-green{background:rgba(16,185,129,.15);color:var(--green);border:1px solid rgba(16,185,129,.3)}
+.b-blue{background:rgba(59,130,246,.15);color:var(--blue);border:1px solid rgba(59,130,246,.3)}
+.b-purple{background:rgba(139,92,246,.15);color:var(--purple);border:1px solid rgba(139,92,246,.3)}
+.b-gray{background:rgba(100,116,139,.15);color:var(--text2);border:1px solid rgba(100,116,139,.3)}
+.b-orange{background:rgba(249,115,22,.15);color:var(--orange);border:1px solid rgba(249,115,22,.3)}
+
+/* ─── FORM ─── */
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg label{font-size:11px;color:var(--text2);font-family:'Barlow Condensed';letter-spacing:1px;font-weight:600}
+.fg input,.fg select,.fg textarea{
+  background:var(--s3);border:1px solid var(--border);color:var(--text);
+  padding:9px 12px;border-radius:var(--r2);font-family:'Tajawal';font-size:13px;transition:.15s
+}
+.fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 2px rgba(245,166,35,.1)}
+.fg select option{background:var(--s2)}
+.fg textarea{resize:vertical;min-height:70px}
+.fg-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+
+/* ─── MODAL ─── */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(6px);z-index:200;display:none;align-items:center;justify-content:center;padding:16px}
+.mo.on{display:flex;animation:fadeup .2s ease}
+.modal{background:var(--s1);border:1px solid var(--border2);border-radius:16px;width:min(720px,100%);max-height:92vh;overflow-y:auto;box-shadow:var(--shadow2)}
+.mh{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--s1);z-index:1}
+.mt{font-family:'Barlow Condensed';font-size:18px;font-weight:800;color:var(--gold);letter-spacing:1px}
+.mb{padding:22px}
+.mf{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+.xbtn{background:none;border:none;color:var(--text2);font-size:18px;cursor:pointer;padding:4px 8px;border-radius:6px}
+.xbtn:hover{color:var(--red)}
+
+/* ─── PROGRESS ─── */
+.prog-wrap{background:var(--s3);border-radius:20px;height:7px;overflow:hidden}
+.prog-bar{height:100%;border-radius:20px;transition:width .8s ease}
+
+/* ─── TABS ─── */
+.tabs{display:flex;gap:3px;background:var(--s3);border-radius:var(--r2);padding:3px;margin-bottom:18px}
+.tab{flex:1;padding:7px 10px;text-align:center;font-size:12px;color:var(--text2);cursor:pointer;border-radius:6px;transition:.15s;border:none;background:none;font-family:'Tajawal';font-weight:700}
+.tab.on{background:var(--s2);color:var(--gold)}
+
+/* ─── 1RM CALCULATOR ─── */
+.rm-table{width:100%;border-collapse:collapse;font-size:12px}
+.rm-table th{background:var(--s4);padding:8px 10px;font-family:'Barlow Condensed';color:var(--gold);font-size:11px;letter-spacing:1px;text-align:center;border:1px solid var(--border)}
+.rm-table td{padding:7px 10px;text-align:center;border:1px solid var(--border);font-family:'Barlow Condensed';font-size:13px;font-weight:600;transition:.2s}
+.rm-table tr:hover td{background:rgba(245,166,35,.05)}
+.rm-table .pct-50{color:#ef4444}
+.rm-table .pct-55{color:#f97316}
+.rm-table .pct-60{color:#f59e0b}
+.rm-table .pct-65{color:#eab308}
+.rm-table .pct-70{color:#84cc16}
+.rm-table .pct-75{color:#22c55e}
+.rm-table .pct-80{color:#10b981}
+.rm-table .pct-85{color:#14b8a6}
+.rm-table .pct-90{color:#3b82f6}
+.rm-table .pct-95{color:#8b5cf6}
+.rm-table .pct-100{color:var(--gold);font-size:14px}
+.rm-input-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:18px}
+.rm-input-box{background:var(--s3);border:1px solid var(--border);border-radius:var(--r2);padding:14px;text-align:center}
+.rm-input-box label{display:block;font-size:10px;color:var(--text2);font-family:'Barlow Condensed';letter-spacing:1px;margin-bottom:6px}
+.rm-input-box input{width:100%;background:var(--s4);border:1px solid var(--border2);color:var(--gold);padding:8px;border-radius:6px;font-family:'Barlow Condensed';font-size:20px;font-weight:800;text-align:center;transition:.15s}
+.rm-input-box input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 2px rgba(245,166,35,.15)}
+.rm-badge{display:inline-block;background:var(--gold3);color:var(--gold);font-family:'Barlow Condensed';font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;margin-top:4px}
+
+/* ─── WORKOUT CARD ─── */
+.wc{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:10px;cursor:pointer;transition:.15s;position:relative;overflow:hidden}
+.wc:hover{border-color:rgba(245,166,35,.4);transform:translateX(-2px)}
+.wc-accent{position:absolute;top:0;right:0;width:3px;height:100%}
+.wc-type{font-family:'Barlow Condensed';font-size:11px;color:var(--text2);letter-spacing:2px}
+.wc-name{font-family:'Barlow Condensed';font-size:18px;font-weight:800;color:var(--text);margin:3px 0}
+.wc-meta{font-size:11px;color:var(--text2)}
+
+/* ─── LEADERBOARD ─── */
+.lb-row{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--s2);border-radius:var(--r2);margin-bottom:7px;border:1px solid var(--border);transition:.15s}
+.lb-row:hover{border-color:rgba(245,166,35,.3)}
+.lb-rank{font-family:'Barlow Condensed';font-size:24px;font-weight:900;width:36px;text-align:center}
+.lb-info{flex:1}
+.lb-name{font-size:14px;font-weight:700;font-family:'Tajawal'}
+.lb-sub{font-size:11px;color:var(--text2);margin-top:2px;font-family:'Tajawal'}
+.lb-score{font-family:'Barlow Condensed';font-size:22px;font-weight:800;color:var(--gold)}
+
+/* ─── PODIUM ─── */
+.podium{display:flex;align-items:flex-end;justify-content:center;gap:16px;padding:20px 0}
+.pod-step{display:flex;flex-direction:column;align-items:center;gap:8px}
+.pod-av{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed';font-size:24px;font-weight:900}
+.pod-block{width:110px;display:flex;align-items:center;justify-content:center;border-radius:8px 8px 0 0;font-family:'Barlow Condensed';font-size:22px;font-weight:900;color:#fff}
+.p1{height:110px;background:linear-gradient(180deg,#f5a623,#c47d00)}
+.p2{height:75px;background:linear-gradient(180deg,#9e9e9e,#616161)}
+.p3{height:55px;background:linear-gradient(180deg,#a0765a,#6d4c41)}
+.pod-name{font-size:12px;text-align:center;color:var(--text2);font-family:'Tajawal';font-weight:700;max-width:90px}
+.pod-score{font-family:'Barlow Condensed';font-size:16px;font-weight:800;color:var(--gold)}
+
+/* ─── REPORT PREVIEW ─── */
+.report-preview{background:#fff;color:#111;padding:0;border-radius:var(--r);overflow:hidden;font-family:'Tajawal'}
+.rp-header{background:linear-gradient(135deg,#0d1117,#1a2235);color:#f5a623;padding:28px 24px;text-align:center}
+.rp-header h1{font-family:'Barlow Condensed';font-size:32px;font-weight:900;letter-spacing:3px;margin-bottom:4px}
+.rp-header p{font-size:13px;color:#94a3b8}
+.rp-section{padding:20px 24px;border-bottom:1px solid #e2e8f0}
+.rp-section h2{font-family:'Barlow Condensed';font-size:16px;font-weight:800;color:#1a2235;letter-spacing:1px;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid #f5a623}
+.rp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rp-item{background:#f8fafc;border-radius:8px;padding:10px 14px}
+.rp-item-label{font-size:10px;color:#64748b;font-family:'Barlow Condensed';letter-spacing:1px}
+.rp-item-val{font-family:'Barlow Condensed';font-size:20px;font-weight:800;color:#1a2235;margin-top:2px}
+.rp-pct-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+.rp-pct-table th{background:#1a2235;color:#f5a623;padding:6px 10px;text-align:center;font-family:'Barlow Condensed';letter-spacing:1px}
+.rp-pct-table td{padding:5px 10px;text-align:center;border:1px solid #e2e8f0;font-family:'Barlow Condensed';font-weight:700}
+.rp-footer{background:#0d1117;color:#64748b;padding:14px 24px;text-align:center;font-size:11px}
+.rp-level-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-family:'Barlow Condensed';font-size:13px;font-weight:700;letter-spacing:1px}
+
+/* ─── ATTENDANCE GRID ─── */
+.att-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.att-c-day{aspect-ratio:1;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-family:'Barlow Condensed';cursor:default}
+.att-present{background:var(--green2);color:var(--green);border:1px solid var(--green)}
+.att-absent{background:var(--s3);color:var(--text3)}
+.att-today{border:2px solid var(--gold)!important}
+
+/* ─── MEASURE CARDS ─── */
+.mc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.mc{background:var(--s3);border-radius:var(--r2);padding:12px;text-align:center;border:1px solid var(--border)}
+.mc-val{font-family:'Barlow Condensed';font-size:22px;font-weight:800;color:var(--gold)}
+.mc-lbl{font-size:11px;color:var(--text2);margin-top:3px;font-family:'Tajawal'}
+.mc-chg{font-size:10px;margin-top:4px;font-family:'Barlow Condensed';font-weight:700}
+.up{color:var(--green)}.dn{color:var(--red)}
+
+/* ─── UTILS ─── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:1000px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.flex{display:flex;align-items:center}
+.fbet{display:flex;align-items:center;justify-content:space-between}
+.gap-2{gap:8px}.gap-3{gap:12px}
+.mt1{margin-top:8px}.mt2{margin-top:16px}.mt3{margin-top:24px}
+.divider{border:none;border-top:1px solid var(--border);margin:16px 0}
+hr{border:none;border-top:1px solid var(--border);margin:14px 0}
+.section-label{font-family:'Barlow Condensed';font-size:13px;font-weight:700;color:var(--gold);letter-spacing:2px;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.alert{padding:10px 14px;border-radius:var(--r2);font-size:13px;margin-bottom:12px;display:flex;align-items:center;gap:8px;font-family:'Tajawal'}
+.alert-info{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);color:var(--blue)}
+.alert-warn{background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.3);color:var(--gold)}
+/* ── TIMER MODE BUTTONS ── */
+.tmr-mode-btn{font-family:'Barlow Condensed';font-size:13px;font-weight:800;padding:8px 16px;border-radius:8px;border:2px solid var(--border2);background:var(--s3);color:var(--text2);cursor:pointer;letter-spacing:1.5px;transition:.15s}
+.tmr-mode-btn:hover{border-color:var(--gold);color:var(--gold)}
+.tmr-mode-btn.on{border-color:var(--gold);background:var(--gold3);color:var(--gold)}
+
+/* ── TIMER FULLSCREEN ── */
+#timer-fullscreen-overlay{display:none;position:fixed;inset:0;background:var(--bg);z-index:300;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
+#timer-fullscreen-overlay.on{display:flex}
+#fs-mode{font-family:'Barlow Condensed';font-size:22px;font-weight:800;color:var(--gold);letter-spacing:4px;margin-bottom:12px}
+#fs-phase{font-family:'Barlow Condensed';font-size:28px;font-weight:900;letter-spacing:6px;color:var(--green);margin-bottom:16px}
+#fs-time{font-family:'Barlow Condensed';font-size:min(22vw,200px);font-weight:900;line-height:1;color:var(--text);letter-spacing:-4px;transition:color .2s}
+#fs-round{font-family:'Barlow Condensed';font-size:36px;font-weight:800;color:var(--text2);margin-top:12px}
+#fs-bar{height:10px;background:var(--gold);transition:width .1s linear;border-radius:5px;margin:20px 0;max-width:600px;width:100%}
+#fs-name{font-family:'Barlow Condensed';font-size:20px;color:var(--text2);letter-spacing:2px;margin-top:8px}
+#fs-close{position:absolute;top:20px;left:20px;font-family:'Barlow Condensed';font-size:14px;color:var(--text2);letter-spacing:2px}
+
+/* ── SETTINGS TOGGLE ── */
+.cfg-toggle{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--s3);border-radius:var(--r2);cursor:pointer;border:1px solid var(--border);transition:.15s}
+.cfg-toggle:hover{border-color:var(--gold)}
+.cfg-toggle input[type=checkbox]{accent-color:var(--gold);width:16px;height:16px;cursor:pointer}
+.cfg-toggle .tog-lbl{font-size:13px;font-weight:600;font-family:'Tajawal'}
+
+.tooltip::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);right:50%;transform:translateX(50%);background:var(--s4);color:var(--text);padding:4px 10px;border-radius:6px;font-size:11px;white-space:nowrap;pointer-events:none;opacity:0;transition:.15s;border:1px solid var(--border);font-family:'Tajawal';z-index:100}
+.tooltip:hover::after{opacity:1}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ SIDEBAR ══════════════════ -->
+<nav id="sb">
+  <div class="sb-logo">
+    <div class="brand">⚡ CF PRO</div>
+    <div class="sub">CrossFit Management System</div>
+    <span class="sb-version">v2.0 · WORLD CLASS</span>
+  </div>
+  <div class="nav-group">MAIN</div>
+  <div class="ni on" data-pg="dashboard"><span class="ico">📊</span>لوحة التحكم</div>
+  <div class="nav-group">MANAGEMENT</div>
+  <div class="ni" data-pg="members"><span class="ico">👥</span>الأعضاء<span class="badge" id="nb">0</span></div>
+  <div class="ni" data-pg="workouts"><span class="ico">🏋️</span>وحدات التدريب</div>
+  <div class="ni" data-pg="attendance"><span class="ico">📅</span>الحضور</div>
+  <div class="nav-group">PERFORMANCE</div>
+  <div class="ni" data-pg="calculator"><span class="ico">🧮</span>حاسبة 1RM</div>
+  <div class="ni" data-pg="measurements"><span class="ico">📏</span>القياسات والاختبارات</div>
+  <div class="nav-group">COMPETITION</div>
+  <div class="ni" data-pg="competition"><span class="ico">🏆</span>البطولة الشهرية</div>
+  <div class="ni" data-pg="leaderboard"><span class="ico">🥇</span>لوحة الترتيب</div>
+  <div class="nav-group">REPORTS</div>
+  <div class="ni" data-pg="reports"><span class="ico">📄</span>تقارير اللاعبين</div>
+  <div class="nav-group">TOOLS</div>
+  <div class="ni" data-pg="timer"><span class="ico">⏱️</span>WOD Timer</div>
+  <div class="nav-group">SYSTEM</div>
+  <div class="ni" data-pg="settings"><span class="ico">⚙️</span>إعدادات النظام</div>
+</nav>
+
+<!-- ══════════════════ MAIN ══════════════════ -->
+<div id="main">
+
+<!-- ══ DASHBOARD ══ -->
+<div class="page on" id="page-dashboard">
+  <div class="topbar"><div class="tb-title">DASHBOARD</div><div class="tb-right"><span style="font-size:11px;color:var(--text2)" id="dt"></span><button class="btn btn-gold" onclick="show('modal-quick')">⚡ إضافة سريعة</button></div></div>
+  <div style="padding:20px 24px">
+    <div class="stats-row" id="dash-stats">
+      <div class="st"><div class="st-accent" style="background:var(--gold)"></div><div class="st-icon">👥</div><div class="st-val" style="color:var(--gold)" id="s-total">0</div><div class="st-lbl">إجمالي الأعضاء</div><div class="st-sub" id="s-active">0 نشط</div></div>
+      <div class="st"><div class="st-accent" style="background:var(--blue)"></div><div class="st-icon">🏋️</div><div class="st-val" style="color:var(--blue)" id="s-wods">0</div><div class="st-lbl">وحدات هذا الشهر</div><div class="st-sub">من 12 مجدولة</div></div>
+      <div class="st"><div class="st-accent" style="background:var(--green)"></div><div class="st-icon">📅</div><div class="st-val" style="color:var(--green)" id="s-att">0%</div><div class="st-lbl">معدل الحضور</div><div class="st-sub">هذا الأسبوع</div></div>
+      <div class="st"><div class="st-accent" style="background:var(--red)"></div><div class="st-icon">⚠️</div><div class="st-val" style="color:var(--red)" id="s-exp">0</div><div class="st-lbl">اشتراكات تنتهي</div><div class="st-sub">خلال 30 يوم</div></div>
+      <div class="st"><div class="st-accent" style="background:var(--purple)"></div><div class="st-icon">🏆</div><div class="st-val" style="color:var(--purple);font-size:18px" id="s-champ">—</div><div class="st-lbl">بطل الشهر</div><div class="st-sub" id="s-month">—</div></div>
+    </div>
+
+    <div class="g2">
+      <div>
+        <!-- Phase -->
+        <div class="sh"><div class="sh-t">المرحلة السنوية</div><span class="badge b-gold" id="phase-badge">Foundation</span></div>
+        <div class="card card-p" style="margin-bottom:14px">
+          <div style="display:flex;gap:2px;border-radius:8px;overflow:hidden;height:36px;margin-bottom:12px">
+            <div style="flex:3;background:#1e3a5f;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed';font-size:12px;font-weight:700;color:var(--blue);cursor:pointer" title="Foundation — أسابيع 1-12">FOUNDATION</div>
+            <div style="flex:3;background:#064e3b;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed';font-size:12px;font-weight:700;color:var(--green);cursor:pointer" title="Development — أسابيع 13-24">DEVELOPMENT</div>
+            <div style="flex:3;background:#3d2800;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed';font-size:12px;font-weight:700;color:var(--gold);cursor:pointer" title="Performance — أسابيع 25-36">PERFORMANCE</div>
+            <div style="flex:3;background:#7f1d1d;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed';font-size:12px;font-weight:700;color:var(--red);cursor:pointer" title="Peak — أسابيع 37-48">PEAK</div>
+          </div>
+          <div class="fbet" style="margin-bottom:6px"><span style="font-size:11px;color:var(--text2)">التقدم السنوي</span><span style="font-family:'Barlow Condensed';font-weight:700;color:var(--gold)" id="yr-pct">0%</span></div>
+          <div class="prog-wrap"><div class="prog-bar" id="yr-bar" style="background:linear-gradient(90deg,var(--blue),var(--gold))"></div></div>
+          <div style="font-size:11px;color:var(--text2);margin-top:10px" id="phase-goal"></div>
+        </div>
+        <!-- Expiring -->
+        <div class="sh"><div class="sh-t">اشتراكات تنتهي قريباً</div></div>
+        <div class="tw"><table><thead><tr><th>الاسم</th><th>النوع</th><th>ينتهي</th><th>الحالة</th></tr></thead><tbody id="exp-tb"></tbody></table></div>
+      </div>
+      <div>
+        <!-- Today WOD -->
+        <div class="sh"><div class="sh-t">وحدة اليوم</div></div>
+        <div id="today-wod-div"></div>
+        <!-- Top attendance -->
+        <div class="sh mt2"><div class="sh-t">أعلى حضور — هذا الأسبوع</div></div>
+        <div id="top-att-div"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MEMBERS ══ -->
+<div class="page" id="page-members">
+  <div class="topbar"><div class="tb-title">MEMBERS</div><div class="tb-right">
+    <input id="msearch" type="text" placeholder="🔍 ابحث..." oninput="filterM()" style="background:var(--s3);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:var(--r2);font-family:'Tajawal';font-size:13px;width:200px">
+    <button class="btn btn-gold" onclick="show('modal-add-member')">+ عضو جديد</button>
+  </div></div>
+  <div style="padding:20px 24px">
+    <div class="g4" style="margin-bottom:16px">
+      <div class="st"><div class="st-accent" style="background:var(--blue)"></div><div class="st-val" style="color:var(--blue)" id="cm1">0</div><div class="st-lbl">شهري</div></div>
+      <div class="st"><div class="st-accent" style="background:var(--green)"></div><div class="st-val" style="color:var(--green)" id="cm3">0</div><div class="st-lbl">3 أشهر</div></div>
+      <div class="st"><div class="st-accent" style="background:var(--gold)"></div><div class="st-val" style="color:var(--gold)" id="cm6">0</div><div class="st-lbl">6 أشهر</div></div>
+      <div class="st"><div class="st-accent" style="background:var(--purple)"></div><div class="st-val" style="color:var(--purple)" id="cma">0</div><div class="st-lbl">سنوي</div></div>
+    </div>
+    <div class="tw"><table>
+      <thead><tr><th>#</th><th>الاسم</th><th>العمر</th><th>المستوى</th><th>الاشتراك</th><th>بدء</th><th>تجديد</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+      <tbody id="members-tb"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ══ WORKOUTS ══ -->
+<div class="page" id="page-workouts">
+  <div class="topbar"><div class="tb-title">WORKOUT UNITS</div><div class="tb-right">
+    <select id="wod-phase-filter" onchange="renderWods()" style="background:var(--s3);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:var(--r2);font-family:'Tajawal';font-size:12px">
+      <option value="">كل المراحل</option><option value="Foundation">Foundation</option><option value="Development">Development</option><option value="Performance">Performance</option><option value="Peak">Peak</option>
+    </select>
+    <button class="btn btn-gold" onclick="show('modal-add-wod')">+ وحدة جديدة</button>
+  </div></div>
+  <div style="padding:20px 24px">
+    <div class="card card-p" style="margin-bottom:16px">
+      <div class="fbet"><div><div style="font-size:11px;color:var(--text2);font-family:'Barlow Condensed';letter-spacing:1px">إجمالي الوحدات</div><div style="font-family:'Barlow Condensed';font-size:28px;font-weight:800;color:var(--gold)" id="wod-cnt">0 / 144</div></div><span class="badge b-gold" id="wod-phase-b">Foundation</span></div>
+      <div class="mt1 prog-wrap"><div class="prog-bar" id="wod-prog" style="background:linear-gradient(90deg,var(--blue),var(--gold))"></div></div>
+    </div>
+    <div class="tabs">
+      <button class="tab on" onclick="setWodTab('all',this)">الكل</button>
+      <button class="tab" onclick="setWodTab('MG',this)">MG</button>
+      <button class="tab" onclick="setWodTab('MW',this)">MW</button>
+      <button class="tab" onclick="setWodTab('MGW',this)">MGW</button>
+    </div>
+    <div id="wods-list"></div>
+  </div>
+</div>
+
+<!-- ══ ATTENDANCE ══ -->
+<div class="page" id="page-attendance">
+  <div class="topbar"><div class="tb-title">ATTENDANCE</div><div class="tb-right">
+    <button class="btn btn-gold" onclick="show('modal-att')">✅ تسجيل حضور</button>
+  </div></div>
+  <div style="padding:20px 24px">
+    <div class="g2">
+      <div>
+        <div class="sh"><div class="sh-t">سجل الحضور</div></div>
+        <div class="tw"><table><thead><tr><th>اللاعب</th><th>التاريخ</th><th>الوحدة</th><th>الحالة</th></tr></thead><tbody id="att-tb"></tbody></table></div>
+      </div>
+      <div>
+        <div class="sh"><div class="sh-t">نسب الحضور</div></div>
+        <div class="card card-p" id="att-rates"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 1RM CALCULATOR ══ -->
+<div class="page" id="page-calculator">
+  <div class="topbar"><div class="tb-title">1RM CALCULATOR</div><div class="tb-right"><span style="font-size:11px;color:var(--text2)">Epley & Brzycki Formula</span></div></div>
+  <div style="padding:20px 24px">
+    <div class="alert alert-info">📌 أدخل وزن التمرين وعدد التكرارات لحساب الـ 1RM المقدّر وجميع النسب المئوية من 50% إلى 100%</div>
+
+    <!-- Input section -->
+    <div class="card card-p" style="margin-bottom:16px">
+      <div class="section-label">إدخال البيانات</div>
+      <div class="rm-input-row">
+        <div class="rm-input-box">
+          <label>اسم التمرين</label>
+          <select id="rm-exercise" onchange="calcRM()" style="width:100%;background:var(--s4);border:1px solid var(--border2);color:var(--gold);padding:8px;border-radius:6px;font-family:'Barlow Condensed';font-size:14px;font-weight:700">
+            <option value="Back Squat">Back Squat</option><option value="Front Squat">Front Squat</option>
+            <option value="Deadlift">Deadlift</option><option value="Romanian Deadlift">Romanian Deadlift</option>
+            <option value="Bench Press">Bench Press</option><option value="Strict Press">Strict Press</option>
+            <option value="Push Press">Push Press</option><option value="Clean">Clean</option>
+            <option value="Clean & Jerk">Clean & Jerk</option><option value="Snatch">Snatch</option>
+            <option value="Thruster">Thruster</option><option value="تمرين مخصص">تمرين مخصص</option>
+          </select>
+        </div>
+        <div class="rm-input-box">
+          <label>الوزن المرفوع (LB)</label>
+          <input type="number" id="rm-weight" placeholder="135" oninput="calcRM()" min="0" step="5">
+          <div class="rm-badge" id="rm-kg-disp">0 kg</div>
+        </div>
+        <div class="rm-input-box">
+          <label>الوزن المرفوع (KG)</label>
+          <input type="number" id="rm-weight-kg" placeholder="60" oninput="calcRMfromKG()" min="0" step="2.5">
+          <div class="rm-badge" id="rm-lb-disp">0 lb</div>
+        </div>
+        <div class="rm-input-box">
+          <label>عدد التكرارات (Reps)</label>
+          <input type="number" id="rm-reps" placeholder="5" oninput="calcRM()" min="1" max="30" value="1">
+        </div>
+        <div class="rm-input-box" style="background:linear-gradient(135deg,var(--gold3),var(--s3));border-color:var(--gold)">
+          <label style="color:var(--gold)">🏆 1RM المحسوب (LB)</label>
+          <div style="font-family:'Barlow Condensed';font-size:36px;font-weight:900;color:var(--gold);margin-top:4px" id="rm-result">—</div>
+          <div style="font-size:12px;color:var(--text2);font-family:'Barlow Condensed'" id="rm-result-kg">— kg</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Percentage Table -->
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-header"><div class="card-title" id="rm-table-title">جدول النسب المئوية</div>
+        <div class="flex gap-2">
+          <button class="btn btn-outline btn-sm" onclick="saveRMtoDB()">💾 حفظ في ملف اللاعب</button>
+          <button class="btn btn-gold btn-sm" onclick="printRMTable()">🖨️ طباعة</button>
+        </div>
+      </div>
+      <div class="card-body" style="overflow-x:auto">
+        <table class="rm-table" id="pct-table">
+          <thead>
+            <tr>
+              <th>%</th><th>LB</th><th>KG</th><th>الاستخدام التدريبي</th><th>الشدة</th>
+            </tr>
+          </thead>
+          <tbody id="pct-tbody">
+            <tr><td colspan="5" style="color:var(--text2);padding:24px;text-align:center;font-family:'Tajawal'">أدخل وزناً وعدد تكرارات لحساب الجدول</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Save for member -->
+    <div class="card card-p">
+      <div class="section-label">حفظ النتيجة لملف لاعب</div>
+      <div class="fg-row">
+        <div class="fg"><label>اللاعب</label>
+          <select id="rm-save-player"><option value="">اختر لاعباً...</option></select>
+        </div>
+        <div class="fg"><label>التاريخ</label><input type="date" id="rm-save-date"></div>
+        <div class="flex" style="align-items:flex-end"><button class="btn btn-green" onclick="saveRMtoDB()">💾 حفظ في ملف اللاعب</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MEASUREMENTS ══ -->
+<div class="page" id="page-measurements">
+  <div class="topbar"><div class="tb-title">MEASUREMENTS & TESTS</div><div class="tb-right">
+    <select id="meas-sel" onchange="loadMeas()" style="background:var(--s3);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:var(--r2);font-family:'Tajawal';font-size:13px;min-width:180px"><option value="">اختر لاعباً...</option></select>
+    <button class="btn btn-gold" onclick="show('modal-add-meas')">+ تسجيل قياس</button>
+  </div></div>
+  <div style="padding:20px 24px">
+    <div class="alert alert-info" id="meas-hint">اختر لاعباً من القائمة أعلاه لعرض قياساته</div>
+    <div id="meas-content" style="display:none">
+      <div class="g3" style="margin-bottom:16px">
+        <div class="card" style="border-top:3px solid var(--red)">
+          <div class="card-header"><div class="card-title">💪 اختبارات القوة</div></div>
+          <div class="card-body" id="str-tests"></div>
+        </div>
+        <div class="card" style="border-top:3px solid var(--blue)">
+          <div class="card-header"><div class="card-title">⚡ الميتابوليزم</div></div>
+          <div class="card-body" id="met-tests"></div>
+        </div>
+        <div class="card" style="border-top:3px solid var(--green)">
+          <div class="card-header"><div class="card-title">🤸 الجمباز</div></div>
+          <div class="card-body" id="gym-tests"></div>
+        </div>
+      </div>
+      <div class="sh"><div class="sh-t">القياسات الجسدية</div></div>
+      <div class="mc-grid" id="body-meas"></div>
+      <!-- 1RM history for this player -->
+      <div class="sh mt2"><div class="sh-t">سجل الـ 1RM</div></div>
+      <div class="tw"><table><thead><tr><th>التاريخ</th><th>Back Squat</th><th>Deadlift</th><th>Strict Press</th><th>Clean</th><th>Snatch</th></tr></thead><tbody id="rm-history-tb"></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ COMPETITION ══ -->
+<div class="page" id="page-competition">
+  <div class="topbar"><div class="tb-title">MONTHLY COMPETITION</div><div class="tb-right">
+    <select id="comp-month" onchange="loadComp()" style="background:var(--s3);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:var(--r2);font-family:'Tajawal';font-size:13px"></select>
+    <button class="btn btn-outline" onclick="show('modal-race')">+ نتائج سباق</button>
+    <button class="btn btn-gold" onclick="calcComp()">🏆 احتسب البطل</button>
+  </div></div>
+  <div style="padding:20px 24px">
+    <div class="card card-p" style="margin-bottom:16px">
+      <div class="fbet">
+        <div><div style="font-family:'Barlow Condensed';font-size:22px;font-weight:800;color:var(--gold)">الجلسة 12 — البطولة المصغرة</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:3px">60% حضور + 40% نتائج 3 سباقات</div></div>
+        <div class="flex gap-2">
+          <span class="badge b-gold tooltip" data-tip="Attendance 60% + Race Results 40%">CrossFit HQ Standard</span>
+        </div>
+      </div>
+      <hr>
+      <div class="g3">
+        <div class="card card-p" style="margin:0;border-top:3px solid var(--red)">
+          <div style="font-size:10px;color:var(--text2);font-family:'Barlow Condensed';letter-spacing:1px">سباق 1 — القوة</div>
+          <div style="font-family:'Barlow Condensed';font-size:16px;font-weight:800;margin-top:4px" id="r1-name">Strength WOD</div>
+          <div style="font-size:11px;color:var(--text2);margin-top:2px" id="r1-desc">لم يُسجَّل بعد</div>
+        </div>
+        <div class="card card-p" style="margin:0;border-top:3px solid var(--blue)">
+          <div style="font-size:10px;color:var(--text2);font-family:'Barlow Condensed';letter-spacing:1px">سباق 2 — التحمل</div>
+          <div style="font-family:'Barlow Condensed';font-size:16px;font-weight:800;margin-top:4px" id="r2-name">MetCon WOD</div>
+          <div style="font-size:11px;color:var(--text2);margin-top:2px" id="r2-desc">لم يُسجَّل بعد</div>
+        </div>
+        <div class="card card-p" style="margin:0;border-top:3px solid var(--green)">
+          <div style="font-size:10px;color:var(--text2);font-family:'Barlow Condensed';letter-spacing:1px">سباق 3 — الجمباز</div>
+          <div style="font-family:'Barlow Condensed';font-size:16px;font-weight:800;margin-top:4px" id="r3-name">Gymnastics WOD</div>
+          <div style="font-size:11px;color:var(--text2);margin-top:2px" id="r3-desc">لم يُسجَّل بعد</div>
+        </div>
+      </div>
+    </div>
+    <div id="podium-wrap" style="display:none">
+      <div class="sh"><div class="sh-t">منصة التتويج</div></div>
+      <div class="card card-p"><div class="podium" id="podium-div"></div></div>
+    </div>
+    <div class="sh mt2"><div class="sh-t">نتائج المتسابقين</div></div>
+    <div class="tw"><table><thead><tr><th>#</th><th>الاسم</th><th>المستوى</th><th>حضور (60%)</th><th>سباق 1</th><th>سباق 2</th><th>سباق 3</th><th>سباقات (40%)</th><th>الإجمالي</th></tr></thead><tbody id="comp-tb"></tbody></table></div>
+  </div>
+</div>
+
+<!-- ══ LEADERBOARD ══ -->
+<div class="page" id="page-leaderboard">
+  <div class="topbar"><div class="tb-title">LEADERBOARD</div></div>
+  <div style="padding:20px 24px">
+    <div class="tabs">
+      <button class="tab on" onclick="showLB('overall',this)">الترتيب العام</button>
+      <button class="tab" onclick="showLB('attendance',this)">الحضور</button>
+      <button class="tab" onclick="showLB('strength',this)">القوة</button>
+      <button class="tab" onclick="showLB('competitions',this)">البطولات</button>
+    </div>
+    <div id="lb-content"></div>
+  </div>
+</div>
+
+<!-- ══ REPORTS ══ -->
+<div class="page" id="page-reports">
+  <div class="topbar"><div class="tb-title">ATHLETE REPORTS</div><div class="tb-right">
+    <select id="rep-player" onchange="loadReport()" style="background:var(--s3);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:var(--r2);font-family:'Tajawal';font-size:13px;min-width:200px"><option value="">اختر لاعباً...</option></select>
+  </div></div>
+  <div style="padding:20px 24px">
+    <div class="alert alert-info" id="rep-hint">اختر لاعباً لإنشاء تقريره الشامل</div>
+    <div id="rep-content" style="display:none">
+      <div class="fbet" style="margin-bottom:16px">
+        <div class="sh-t">تقرير شامل</div>
+        <div class="flex gap-2">
+          <button class="btn btn-outline" onclick="printReport()">🖨️ طباعة / PDF</button>
+          <button class="btn btn-green" onclick="copyReportLink()">📋 نسخ التقرير</button>
+          <button class="btn btn-blue" onclick="shareViaWhatsApp()">📱 إرسال واتساب</button>
+          <button class="btn btn-gold" onclick="downloadReport()">⬇️ تحميل HTML</button>
+        </div>
+      </div>
+      <div id="report-preview-wrap" class="report-preview"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ WOD TIMER ══ -->
+<div class="page" id="page-timer">
+  <div class="topbar"><div class="tb-title">⏱ WOD TIMER</div><div class="tb-right">
+    <span style="font-size:11px;color:var(--text2)">Smart WOD Timer — AMRAP · EMOM · For Time · Tabata · Countdown</span>
+  </div></div>
+  <div style="padding:20px 24px">
+    <div class="g2" style="align-items:start">
+
+      <!-- LEFT: Timer Display -->
+      <div>
+        <!-- Mode Selector -->
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px" id="timer-mode-btns">
+          <button class="tmr-mode-btn on" data-mode="amrap" onclick="setTimerMode('amrap',this)">AMRAP</button>
+          <button class="tmr-mode-btn" data-mode="emom" onclick="setTimerMode('emom',this)">EMOM</button>
+          <button class="tmr-mode-btn" data-mode="fortime" onclick="setTimerMode('fortime',this)">For Time</button>
+          <button class="tmr-mode-btn" data-mode="tabata" onclick="setTimerMode('tabata',this)">Tabata</button>
+          <button class="tmr-mode-btn" data-mode="countdown" onclick="setTimerMode('countdown',this)">Countdown</button>
+          <button class="tmr-mode-btn" data-mode="stopwatch" onclick="setTimerMode('stopwatch',this)">Stopwatch</button>
+          <button class="tmr-mode-btn" data-mode="rest" onclick="setTimerMode('rest',this)">Rest</button>
+        </div>
+
+        <!-- Main Timer Face -->
+        <div id="timer-face" style="background:var(--s2);border:1px solid var(--border);border-radius:20px;padding:0;overflow:hidden;position:relative;margin-bottom:16px">
+          <!-- Phase indicator bar -->
+          <div id="timer-phase-bar" style="height:6px;background:var(--gold);transition:width 0.1s linear;width:100%"></div>
+
+          <div style="padding:28px 24px 24px">
+            <!-- Mode label + round info -->
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+              <div>
+                <div id="timer-mode-label" style="font-family:'Barlow Condensed';font-size:13px;font-weight:800;color:var(--gold);letter-spacing:3px">AMRAP</div>
+                <div id="timer-wod-name" style="font-family:'Barlow Condensed';font-size:16px;font-weight:700;color:var(--text);margin-top:2px">—</div>
+              </div>
+              <div style="text-align:left">
+                <div style="font-size:10px;color:var(--text2);font-family:'Barlow Condensed';letter-spacing:1px" id="timer-round-label">ROUND</div>
+                <div style="font-family:'Barlow Condensed';font-size:32px;font-weight:900;color:var(--gold);line-height:1" id="timer-round">1</div>
+              </div>
+            </div>
+
+            <!-- Big clock -->
+            <div style="text-align:center;margin:10px 0 8px">
+              <div id="timer-phase-tag" style="font-family:'Barlow Condensed';font-size:14px;font-weight:800;letter-spacing:4px;color:var(--green);margin-bottom:8px">WORK</div>
+              <div id="timer-display" style="font-family:'Barlow Condensed';font-size:96px;font-weight:900;color:var(--text);line-height:1;letter-spacing:-2px;transition:color .2s">00:00</div>
+              <div id="timer-sub-display" style="font-family:'Barlow Condensed';font-size:18px;color:var(--text2);margin-top:4px">Total: 00:00</div>
+            </div>
+
+            <!-- Interval progress (for EMOM/Tabata) -->
+            <div id="interval-prog-wrap" style="margin:12px 0;display:none">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+                <span style="font-size:10px;color:var(--text2);font-family:'Barlow Condensed';letter-spacing:1px" id="interval-prog-label">INTERVAL</span>
+                <span style="font-size:10px;color:var(--gold);font-family:'Barlow Condensed'" id="interval-prog-pct">0%</span>
+              </div>
+              <div class="prog-wrap" style="height:10px"><div class="prog-bar" id="interval-prog-bar" style="background:var(--gold)"></div></div>
+            </div>
+
+            <!-- Controls -->
+            <div style="display:flex;gap:10px;justify-content:center;margin-top:18px">
+              <button id="btn-start" onclick="timerStart()" style="font-family:'Barlow Condensed';font-size:18px;font-weight:900;padding:14px 40px;border-radius:12px;border:none;cursor:pointer;background:var(--green);color:#fff;letter-spacing:2px;transition:.2s;min-width:140px">▶ START</button>
+              <button onclick="timerPause()" style="font-family:'Barlow Condensed';font-size:18px;font-weight:900;padding:14px 24px;border-radius:12px;border:none;cursor:pointer;background:var(--s4);color:var(--text);letter-spacing:1px;transition:.2s">⏸</button>
+              <button onclick="timerReset()" style="font-family:'Barlow Condensed';font-size:18px;font-weight:900;padding:14px 24px;border-radius:12px;border:none;cursor:pointer;background:var(--s4);color:var(--text);letter-spacing:1px;transition:.2s">↺</button>
+            </div>
+
+            <!-- Sound toggle -->
+            <div style="display:flex;justify-content:center;gap:10px;margin-top:12px;flex-wrap:wrap">
+              <button onclick="toggleSound()" id="sound-btn" style="font-family:'Barlow Condensed';font-size:11px;font-weight:700;padding:6px 14px;border-radius:8px;border:1px solid var(--border);background:var(--s3);color:var(--gold);cursor:pointer;letter-spacing:1px">🔊 صوت: تشغيل</button>
+              <button onclick="toggleFullscreen()" style="font-family:'Barlow Condensed';font-size:11px;font-weight:700;padding:6px 14px;border-radius:8px;border:1px solid var(--border);background:var(--s3);color:var(--text2);cursor:pointer;letter-spacing:1px">⛶ ملء الشاشة</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alert log -->
+        <div class="card card-p">
+          <div style="font-family:'Barlow Condensed';font-size:12px;font-weight:700;color:var(--gold);letter-spacing:2px;margin-bottom:10px">📋 سجل الجولات</div>
+          <div id="timer-log" style="max-height:140px;overflow-y:auto;font-size:12px;color:var(--text2);font-family:'Barlow Condensed'">
+            <div style="color:var(--text3)">ابدأ التايمر لتسجيل الجولات...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Settings Panel -->
+      <div>
+        <div class="card" style="margin-bottom:14px">
+          <div class="card-header"><div class="card-title" id="timer-settings-title">⚙️ إعدادات AMRAP</div></div>
+          <div class="card-body" id="timer-settings-panel">
+
+            <!-- AMRAP settings -->
+            <div id="ts-amrap">
+              <div class="fg-row">
+                <div class="fg"><label>المدة (دقيقة)</label>
+                  <input type="number" id="amrap-min" value="20" min="1" max="60" style="font-family:'Barlow Condensed';font-size:20px;font-weight:800;text-align:center">
+                </div>
+                <div class="fg"><label>تنبيه قبل النهاية</label>
+                  <select id="amrap-warn" style="font-family:'Barlow Condensed';font-size:14px">
+                    <option value="60">دقيقة واحدة</option>
+                    <option value="120">دقيقتان</option>
+                    <option value="180">3 دقائق</option>
+                    <option value="30">30 ثانية</option>
+                    <option value="0">لا تنبيه</option>
+                  </select>
+                </div>
+                <div class="fg" style="grid-column:1/-1"><label>اسم الـ WOD</label>
+                  <input type="text" id="amrap-name" placeholder="مثال: Helen, Cindy..." style="font-family:'Barlow Condensed'">
+                </div>
+              </div>
+            </div>
+
+            <!-- EMOM settings -->
+            <div id="ts-emom" style="display:none">
+              <div class="fg-row">
+                <div class="fg"><label>عدد الجولات (دقائق)</label>
+                  <input type="number" id="emom-rounds" value="10" min="1" max="60" style="font-family:'Barlow Condensed';font-size:20px;font-weight:800;text-align:center">
+                </div>
+                <div class="fg"><label>مدة كل دقيقة (ثانية)</label>
+                  <input type="number" id="emom-interval" value="60" min="10" max="120" style="font-family:'Barlow Condensed';font-size:20px;font-weight:800;text-align:center">
+                </div>
+                <div class="fg" style="grid-column:1/-1"><label>اسم الـ WOD</label>
+                  <input type="text" id="emom-name" placeholder="EMOM 10..." style="font-family:'Barlow Condensed'">
+                </div>
+              </div>
+            </div>
+
+            <!-- For Time settings -->
+            <div id="ts-fortime" style="display:none">
+              <div class="fg-row">
+                <div class="fg"><label>وقت الإيقاف التلقائي (دقيقة)</label>
+                  <input type="number" id="ft-cap" value="20" min="1" max="120" style="font-family:'Barlow Condensed';font-size:20px;font-weight:800;text-align:center">
+                </div>
+                <div class="fg"><label>عدد الجولات</label>
+                  <input type="number" id="ft-rounds" value="1" min="1" max="30" style="font-family:'Barlow Condensed';font-size:20px;font-weight:800;text-align:center">
+                </div>
+                <div class="fg" style="grid-column:1/-1"><label>اسم الـ WOD</label>
+                  <input type="text" id="ft-name" placeholder="Fran, Grace..." style="font-family:'Barlow Condensed'">
+                </div>
+              </div>
+            </div>
+
+            <!-- Tabata settings -->
+            <div id="ts-tabata" style="display:none">
+              <div class="fg-row">
+                <div class="fg"><label>عمل (ثانية)</label>
+                  <input type="number" id="tab-work" value="20" min="5" max="120" style="font-family:'Barlow Condensed';font-size:20px;font-weight:800;text-align:center;color:var(--green)">
+                </div>
+                <div class="fg"><label>راحة (ثانية)</label>
+                  <input type="number" id="tab-rest" value="10" min="5" max="120" style="font-family:'Barlow Condensed';font-size:20px;font-weight:800;text-align:center;color:var(--red)">
+                </div>
+                <div class="fg"><label>عدد الجولات</label>
+                  <input type="number" id="tab-rounds" value="8" min="1" max="30" style="font-family:'Barlow Condensed';font-size:20px;font-weight:800;text-align:center">
+                </div>
+                <div class="fg"><label>التمرين</label>
+                  <input type="text" id="tab-name" placeholder="Air Squats..." style="font-family:'Barlow Condensed'">
+                </div>
+              </div>
+            </div>
+
+            <!-- Countdown settings -->
+            <div id="ts-countdown" style="display:none">
+              <div class="fg-row">
+                <div class="fg"><label>الدقائق</label>
+                  <input type="number" id="cd-min" value="3" min="0" max="60" style="font-family:'Barlow Condensed';font-size:20px;font-weight:800;text-align:center">
+                </div>
+                <div class="fg"><label>الثواني</label>
+                  <input type="number" id="cd-sec" value="0" min="0" max="59" style="font-family:'Barlow Condensed';font-size:20px;font-weight:800;text-align:center">
+                </div>
+              </div>
+            </div>
+
+            <!-- Stopwatch settings -->
+            <div id="ts-stopwatch" style="display:none">
+              <div class="alert alert-info">⏱ ساعة توقيت تصاعدية — اضغط Start للبدء</div>
+            </div>
+
+            <!-- Rest settings -->
+            <div id="ts-rest" style="display:none">
+              <div class="fg-row">
+                <div class="fg"><label>وقت الراحة (ثانية)</label>
+                  <input type="number" id="rest-sec" value="90" min="10" max="600" style="font-family:'Barlow Condensed';font-size:20px;font-weight:800;text-align:center;color:var(--red)">
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-top:14px">
+              <button onclick="applyTimerSettings()" class="btn btn-gold" style="width:100%;justify-content:center;padding:12px;font-size:15px;letter-spacing:1px">✅ تطبيق الإعدادات</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Preset WODs -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">⚡ WODs محفوظة — إطلاق سريع</div></div>
+          <div class="card-body" style="display:flex;flex-direction:column;gap:7px" id="preset-wods-list">
+          </div>
+        </div>
+
+        <!-- Notifications info -->
+        <div class="card card-p" style="margin-top:14px">
+          <div class="section-label">🔔 التنبيهات الصوتية</div>
+          <div style="display:grid;gap:8px">
+            <div style="display:flex;gap:10px;align-items:center;padding:8px 12px;background:var(--s3);border-radius:var(--r2)">
+              <span style="font-size:18px">🟢</span><div><div style="font-size:12px;font-weight:700;font-family:'Barlow Condensed'">بداية التمرين</div><div style="font-size:10px;color:var(--text2)">3 صفارات تصاعدية عند الضغط على Start</div></div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;padding:8px 12px;background:var(--s3);border-radius:var(--r2)">
+              <span style="font-size:18px">🟡</span><div><div style="font-size:12px;font-weight:700;font-family:'Barlow Condensed'">تنبيه النهاية القريبة</div><div style="font-size:10px;color:var(--text2)">تنبيه مزدوج عند الاقتراب من النهاية</div></div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;padding:8px 12px;background:var(--s3);border-radius:var(--r2)">
+              <span style="font-size:18px">🔴</span><div><div style="font-size:12px;font-weight:700;font-family:'Barlow Condensed'">TIME'S UP</div><div style="font-size:10px;color:var(--text2)">صفارة طويلة + رسالة انتهاء</div></div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;padding:8px 12px;background:var(--s3);border-radius:var(--r2)">
+              <span style="font-size:18px">🔵</span><div><div style="font-size:12px;font-weight:700;font-family:'Barlow Condensed'">تبديل الجولة (EMOM/Tabata)</div><div style="font-size:10px;color:var(--text2)">بيب قصير في كل تغيير جولة</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SETTINGS ══ -->
+<div class="page" id="page-settings">
+  <div class="topbar"><div class="tb-title">⚙️ SYSTEM SETTINGS</div><div class="tb-right">
+    <button class="btn btn-gold" onclick="saveSettings()">💾 حفظ الإعدادات</button>
+    <button class="btn btn-red" onclick="resetSettings()">↺ إعادة تعيين</button>
+  </div></div>
+  <div style="padding:20px 24px">
+    <div class="g2">
+
+      <!-- LEFT COLUMN -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+
+        <!-- Gym Identity -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">🏟️ هوية الصالة</div></div>
+          <div class="card-body">
+            <div class="fg-row">
+              <div class="fg" style="grid-column:1/-1"><label>اسم الصالة</label>
+                <input type="text" id="cfg-gym-name" placeholder="CrossFit Box Name" style="font-family:'Barlow Condensed';font-size:18px;font-weight:800">
+              </div>
+              <div class="fg"><label>الموقع / المدينة</label>
+                <input type="text" id="cfg-gym-city" placeholder="الرياض، جدة...">
+              </div>
+              <div class="fg"><label>رقم التواصل</label>
+                <input type="text" id="cfg-gym-phone" placeholder="+966 5x xxx xxxx">
+              </div>
+              <div class="fg"><label>البريد الإلكتروني</label>
+                <input type="email" id="cfg-gym-email" placeholder="info@crossfitbox.com">
+              </div>
+              <div class="fg"><label>الموقع الإلكتروني</label>
+                <input type="text" id="cfg-gym-web" placeholder="www.crossfitbox.com">
+              </div>
+              <div class="fg"><label>شعار / رسالة الصالة</label>
+                <input type="text" id="cfg-gym-slogan" placeholder="Forging Elite Fitness">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dashboard Widgets Control -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">📊 تخصيص لوحة التحكم</div></div>
+          <div class="card-body">
+            <div class="section-label" style="margin-bottom:12px">بطاقات الإحصائيات المرئية</div>
+            <div style="display:flex;flex-direction:column;gap:8px" id="widget-toggles">
+              <label class="cfg-toggle"><input type="checkbox" id="w-members" checked><span class="tog-lbl">👥 إجمالي الأعضاء</span></label>
+              <label class="cfg-toggle"><input type="checkbox" id="w-wods" checked><span class="tog-lbl">🏋️ وحدات التدريب</span></label>
+              <label class="cfg-toggle"><input type="checkbox" id="w-att" checked><span class="tog-lbl">📅 معدل الحضور</span></label>
+              <label class="cfg-toggle"><input type="checkbox" id="w-exp" checked><span class="tog-lbl">⚠️ اشتراكات تنتهي</span></label>
+              <label class="cfg-toggle"><input type="checkbox" id="w-champ" checked><span class="tog-lbl">🏆 بطل الشهر</span></label>
+            </div>
+            <hr>
+            <div class="section-label" style="margin-bottom:12px">المحتوى الجانبي للداش</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <label class="cfg-toggle"><input type="checkbox" id="w-phase" checked><span class="tog-lbl">📈 عرض المرحلة السنوية</span></label>
+              <label class="cfg-toggle"><input type="checkbox" id="w-today-wod" checked><span class="tog-lbl">🏋️ وحدة اليوم</span></label>
+              <label class="cfg-toggle"><input type="checkbox" id="w-top-att" checked><span class="tog-lbl">🌟 أعلى حضور الأسبوع</span></label>
+              <label class="cfg-toggle"><input type="checkbox" id="w-expiring" checked><span class="tog-lbl">📋 جدول الاشتراكات المنتهية</span></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dashboard Stats Custom Labels -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">🏷️ تخصيص عناوين البطاقات</div></div>
+          <div class="card-body">
+            <div class="fg-row">
+              <div class="fg"><label>عنوان بطاقة الأعضاء</label><input type="text" id="lbl-members" value="إجمالي الأعضاء"></div>
+              <div class="fg"><label>عنوان بطاقة الوحدات</label><input type="text" id="lbl-wods" value="وحدات هذا الشهر"></div>
+              <div class="fg"><label>عنوان بطاقة الحضور</label><input type="text" id="lbl-att" value="معدل الحضور"></div>
+              <div class="fg"><label>عنوان بطاقة التجديد</label><input type="text" id="lbl-exp" value="اشتراكات تنتهي"></div>
+              <div class="fg"><label>عنوان بطاقة البطل</label><input type="text" id="lbl-champ" value="بطل الشهر"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+
+        <!-- Program Settings -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">📅 إعدادات البرنامج</div></div>
+          <div class="card-body">
+            <div class="fg-row">
+              <div class="fg"><label>تاريخ بداية البرنامج السنوي</label>
+                <input type="date" id="cfg-program-start">
+              </div>
+              <div class="fg"><label>عدد الجلسات الشهرية</label>
+                <input type="number" id="cfg-sessions-month" value="12" min="1" max="30">
+              </div>
+              <div class="fg"><label>عدد أيام التدريب أسبوعياً</label>
+                <select id="cfg-days-week">
+                  <option value="3">3 أيام</option><option value="4">4 أيام</option>
+                  <option value="5">5 أيام</option><option value="6">6 أيام</option>
+                </select>
+              </div>
+              <div class="fg"><label>هدف الوحدات السنوية</label>
+                <input type="number" id="cfg-annual-target" value="144" min="50" max="300">
+              </div>
+            </div>
+            <hr>
+            <div class="section-label">المراحل السنوية — تخصيص</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center;padding:10px 12px;background:var(--s3);border-radius:var(--r2);border-right:3px solid var(--blue)">
+                <div style="font-family:'Barlow Condensed';font-weight:800;color:var(--blue)">FOUNDATION</div>
+                <div class="fg" style="gap:3px"><label style="font-size:9px">هدف المرحلة</label><input type="text" id="phase1-goal" value="بناء الأساس الحركي وتحسين التكنيك ورفع التحمل العام" style="font-size:11px"></div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center;padding:10px 12px;background:var(--s3);border-radius:var(--r2);border-right:3px solid var(--green)">
+                <div style="font-family:'Barlow Condensed';font-weight:800;color:var(--green)">DEVELOPMENT</div>
+                <div class="fg" style="gap:3px"><label style="font-size:9px">هدف المرحلة</label><input type="text" id="phase2-goal" value="زيادة القوة، إدخال تعقيد تدريجي، تحسين التنقلات" style="font-size:11px"></div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center;padding:10px 12px;background:var(--s3);border-radius:var(--r2);border-right:3px solid var(--gold)">
+                <div style="font-family:'Barlow Condensed';font-weight:800;color:var(--gold)">PERFORMANCE</div>
+                <div class="fg" style="gap:3px"><label style="font-size:9px">هدف المرحلة</label><input type="text" id="phase3-goal" value="رفع الكفاءة، تحسين الأرقام، اختبارات الأداء" style="font-size:11px"></div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center;padding:10px 12px;background:var(--s3);border-radius:var(--r2);border-right:3px solid var(--red)">
+                <div style="font-family:'Barlow Condensed';font-weight:800;color:var(--red)">PEAK</div>
+                <div class="fg" style="gap:3px"><label style="font-size:9px">هدف المرحلة</label><input type="text" id="phase4-goal" value="الوصول لأعلى مستوى، تثبيت النتائج، اختبار التقدم" style="font-size:11px"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Competition Settings -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">🏆 إعدادات البطولة الشهرية</div></div>
+          <div class="card-body">
+            <div class="fg-row">
+              <div class="fg"><label>نسبة الحضور %</label>
+                <input type="number" id="cfg-att-weight" value="60" min="0" max="100" style="font-family:'Barlow Condensed';font-size:20px;font-weight:800;text-align:center;color:var(--blue)">
+              </div>
+              <div class="fg"><label>نسبة السباقات %</label>
+                <input type="number" id="cfg-race-weight" value="40" min="0" max="100" style="font-family:'Barlow Condensed';font-size:20px;font-weight:800;text-align:center;color:var(--red)">
+              </div>
+              <div class="fg"><label>الجلسة المخصصة للبطولة</label>
+                <input type="number" id="cfg-comp-session" value="12" min="1" max="30" style="font-family:'Barlow Condensed';font-size:18px;font-weight:800;text-align:center">
+              </div>
+              <div class="fg"><label>عدد السباقات في البطولة</label>
+                <select id="cfg-race-count" style="font-family:'Barlow Condensed';font-size:14px">
+                  <option value="3" selected>3 سباقات</option>
+                  <option value="2">سباقان</option>
+                  <option value="1">سباق واحد</option>
+                </select>
+              </div>
+            </div>
+            <div class="alert alert-warn" style="margin-top:12px">⚠️ يجب أن يساوي مجموع نسبة الحضور والسباقات 100%</div>
+          </div>
+        </div>
+
+        <!-- Notifications & Timer Sounds -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">🔔 إعدادات التنبيهات والتايمر</div></div>
+          <div class="card-body">
+            <div style="display:flex;flex-direction:column;gap:8px" id="notif-toggles">
+              <label class="cfg-toggle"><input type="checkbox" id="cfg-sound-start" checked><span class="tog-lbl">🟢 صوت بداية التمرين</span></label>
+              <label class="cfg-toggle"><input type="checkbox" id="cfg-sound-end" checked><span class="tog-lbl">🔴 صوت انتهاء التمرين</span></label>
+              <label class="cfg-toggle"><input type="checkbox" id="cfg-sound-warn" checked><span class="tog-lbl">🟡 تنبيه قبل النهاية</span></label>
+              <label class="cfg-toggle"><input type="checkbox" id="cfg-sound-round" checked><span class="tog-lbl">🔵 تنبيه تغيير الجولة</span></label>
+              <label class="cfg-toggle"><input type="checkbox" id="cfg-countdown-3" checked><span class="tog-lbl">⏳ عد تنازلي 3-2-1 قبل البدء</span></label>
+            </div>
+            <hr>
+            <div class="fg"><label>مستوى الصوت الافتراضي</label>
+              <input type
